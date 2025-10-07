@@ -14,10 +14,12 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.35.5'
+          flutter-version: '3.35.5'  # version compatible avec ton projet
 
       - name: Install dependencies
         run: flutter pub get
+        working-directory: projet
 
       - name: Run Flutter build
         run: flutter build
+        working-directory: projet
