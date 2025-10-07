@@ -1,10 +1,7 @@
-name: Build Flutter App
+name: Simple Flutter Build
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -19,11 +16,10 @@ jobs:
         with:
           flutter-version: '3.13.6'
 
-      - run: flutter pub get
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: app
 
-      - run: flutter build apk --release
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: app-release.apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Run Flutter build
+        run: flutter build
+        working-directory: app
