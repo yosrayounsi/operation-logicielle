@@ -1,0 +1,132 @@
+1-Trouver l’auteur du premier commit
+Commande : git log –reverse
+Author: michaelisvy <misvy@vmware.com>
+Date:   Wed Jan 9 01:05:18 2013 -0800
+    Initial commit
+2-Trouver l’auteur du dernier commit
+Commande :  git log -1 --pretty=format:"%h - %an - %ae - %ad"
+Patrick Baumgartner - contact@patbaumgartner.com - Sat Oct 4 10:32:59 2025 +0200
+3-Lister toutes les branches
+Commande : git branch -a
+main
+  remotes/origin/3310
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/efficient-webjars
+  remotes/origin/gh-pages
+  remotes/origin/hacking/mysql
+  remotes/origin/main
+  remotes/origin/spring-ai
+  remotes/origin/springboot3
+  remotes/origin/wavefront
+LEUR FINALITE :
+La branche main contient la version principale et stable du projet.
+origin/3310 sert à corriger une issue ou tester une amélioration précise.
+origin/efficient-webjars vise à optimiser la gestion des ressources front-end via WebJars.
+origin/gh-pages est utilisée pour publier la documentation ou la démo sur GitHub Pages.
+origin/hacking/mysql teste l’intégration de la base de données MySQL.
+origin/spring-ai expérimente des fonctions d’intelligence artificielle avec Spring AI.
+origin/springboot3 prépare la migration du projet vers Spring Boot 3.
+origin/wavefront ajoute le support du monitoring et de l’observabilité via Wavefront.
+4-Voir les 3 principaux contributeurs (par nombre de commits)
+Commande : git shortlog -sn | Select-Object -First 3
+   210  Mic
+   156  Dave Syer
+   142  Antoine Rey
+5-Lister les tags et leur signification
+Commande : git tag -n
+1.5.x           Use leading / in app URL
+6-Vérifier s’il y a un système d’intégration continue
+Commande :  ls -Recurse | Where-Object { $_.Name -match "Jenkinsfile|\.travis\.yml|\.github\\workflows" }
+Pour afficher le contenu Commande : cat .github/workflows/*.yml
+name: Deploy and Test Cluster
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'k8s/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'k8s/**'
+
+jobs:
+  deploy-and-test-cluster:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1
+
+      - name: Deploy application
+        run: |
+          kubectl apply -f k8s/
+
+      - name: Wait for Pods to be ready
+        run: |
+          kubectl wait --for=condition=ready pod -l app=demo-db --timeout=180s
+          kubectl wait --for=condition=ready pod -l app=petclinic --timeout=180s
+
+# This workflow will build a Java project with Gradle, and cache/restore any dependencies to improve the workflow execution time  
+# For more information see: https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '17' ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK ${{matrix.java}}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{matrix.java}}
+          distribution: 'adopt'
+          cache: maven
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build with Gradle
+        run: ./gradlew build
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time   
+# For more information see: https://docs.github.com/en/actions/use-cases-and-examples/building-and-testing/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '17' ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK ${{matrix.java}}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{matrix.java}}
+          distribution: 'adopt'
+          cache: maven
+      - name: Build with Maven Wrapper
+        run: ./mvnw -B verify
+
