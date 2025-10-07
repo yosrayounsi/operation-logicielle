@@ -18,8 +18,8 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
-        working-directory: app
+        working-directory: projet
 
       - name: Run Flutter build
         run: flutter build
-        working-directory: app
+        working-directory: projet
